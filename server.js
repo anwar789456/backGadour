@@ -3,10 +3,11 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
 
-const stockRoutes = require('./routes/stock');
-const bonsRoutes = require('./routes/bons');
+const authRoutes    = require('./routes/auth');
+const stockRoutes   = require('./routes/stock');
+const bonsRoutes    = require('./routes/bons');
 const facturesRoutes = require('./routes/factures');
-const devisRoutes = require('./routes/devis');
+const devisRoutes   = require('./routes/devis');
 const clientsRoutes = require('./routes/clients');
 
 const app = express();
@@ -17,6 +18,7 @@ app.use(cors({
     credentials: true,
 }));
 
+app.use('/api', authRoutes);
 app.use('/api', stockRoutes);
 app.use('/api', bonsRoutes);
 app.use('/api', facturesRoutes);
