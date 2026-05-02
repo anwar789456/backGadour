@@ -22,6 +22,7 @@ const bonSchema = new mongoose.Schema({
     compteur: Number,
     retour: String,
     status: { type: String, default: 'green' },
+    facture_num: { type: Number, default: null },
 });
 
 module.exports = mongoose.model('bons', bonSchema);

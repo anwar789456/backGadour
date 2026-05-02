@@ -100,6 +100,27 @@ router.post('/increment-bons', async (req, res) => {
     }
 });
 
+router.put('/bons/mark-used', async (req, res) => {
+    try {
+        const { bonIds, facture_num } = req.body;
+        if (!Array.isArray(bonIds) || !bonIds.length) return res.status(400).json({ error: 'bonIds array required' });
+        await Bon.updateMany({ _id: { $in: bonIds } }, { $set: { status: 'red', facture_num } });
+        res.json({ message: 'Bons updated', count: bonIds.length });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.get('/bons/by-facture/:facture_num', async (req, res) => {
+    try {
+        const facture_num = parseInt(req.params.facture_num, 10);
+        const bons = await Bon.find({ facture_num });
+        res.json(bons);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 router.put('/updatebon/:id', async (req, res) => {
     try {
         const { id } = req.params;
