@@ -173,6 +173,30 @@ router.put('/facturecompteur/:id', async (req, res) => {
     }
 });
 
+router.put('/rename-client/:oldName', async (req, res) => {
+    try {
+        const oldName = decodeURIComponent(req.params.oldName);
+        const { newName } = req.body;
+        if (!newName || !newName.trim()) return res.status(400).json({ error: 'newName is required' });
+        const source = await Facture.findOne({ nomclient: oldName });
+        if (!source) return res.status(404).json({ error: 'Source client not found' });
+        const target = await Facture.findOne({ nomclient: newName });
+        if (target) {
+            // Merge: push all factures from source into target, then delete source
+            target.factures.push(...source.factures);
+            await target.save();
+            await Facture.findOneAndDelete({ nomclient: oldName });
+            return res.status(200).json({ merged: true, client: target });
+        }
+        // Simple rename
+        source.nomclient = newName;
+        await source.save();
+        res.status(200).json({ merged: false, client: source });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 router.delete('/delete-client/:nomclient', async (req, res) => {
     try {
         const client = await Facture.findOneAndDelete({ nomclient: req.params.nomclient });
