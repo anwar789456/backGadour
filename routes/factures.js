@@ -96,10 +96,11 @@ router.post('/increment-facture', async (req, res) => {
     }
 });
 
-router.put('/facturesnum/:nomclient/:factureId', async (req, res) => {
+router.put('/facturesnum/:factureId', async (req, res) => {
     try {
-        const { nomclient, factureId } = req.params;
+        const { factureId } = req.params;
         const updatedFacture = req.body;
+        const nomclient = req.body.nomclient || req.query.nomclient;
         const clientDoc = await Facture.findOne({ nomclient });
         if (!clientDoc) return res.status(404).json({ message: 'Client not found' });
         const factureIndex = clientDoc.factures.findIndex(f => f._id.toString() === factureId);
@@ -207,9 +208,10 @@ router.delete('/delete-client/:nomclient', async (req, res) => {
     }
 });
 
-router.delete('/delete-facture/:nomclient/:factureId', async (req, res) => {
+router.delete('/delete-facture/:factureId', async (req, res) => {
     try {
-        const { nomclient, factureId } = req.params;
+        const { factureId } = req.params;
+        const nomclient = req.query.nomclient;
         const client = await Facture.findOne({ nomclient });
         if (!client) return res.status(404).json({ message: 'Client not found' });
         client.factures = client.factures.filter(f => f._id.toString() !== factureId);
