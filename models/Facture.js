@@ -22,6 +22,7 @@ const factureSchema = new mongoose.Schema({
                 {
                     amount: { type: Number },
                     date: { type: Date },
+                    modalite: { type: String },
                 },
             ],
         },

@@ -69,12 +69,12 @@ router.post('/add-facture/:nomclient', async (req, res) => {
 router.post('/add-advance/:nomclient/:factureId', async (req, res) => {
     try {
         const { nomclient, factureId } = req.params;
-        const { amount, date } = req.body;
+        const { amount, date, modalite } = req.body;
         const client = await Facture.findOne({ nomclient });
         if (!client) return res.status(404).json({ message: 'Client not found' });
         const facture = client.factures.find(f => f.facture_num.toString() === factureId);
         if (!facture) return res.status(404).json({ message: 'Facture not found' });
-        facture.advances.push({ amount, date: new Date(date) });
+        facture.advances.push({ amount, date: new Date(date), modalite: modalite || 'espece' });
         await client.save();
         res.status(200).json({ message: 'Advance payment added', data: client });
     } catch (error) {
@@ -149,7 +149,7 @@ router.put('/update-facture-status/:nomclient/:factureId', async (req, res) => {
 router.put('/update-advance/:nomclient/:factureId/:advanceId', async (req, res) => {
     try {
         const { nomclient, factureId, advanceId } = req.params;
-        const { amount, date } = req.body;
+        const { amount, date, modalite } = req.body;
         const client = await Facture.findOne({ nomclient });
         if (!client) return res.status(404).json({ message: 'Client not found' });
         const facture = client.factures.find(f => f.facture_num.toString() === factureId);
@@ -158,6 +158,7 @@ router.put('/update-advance/:nomclient/:factureId/:advanceId', async (req, res) 
         if (!advance) return res.status(404).json({ message: 'Advance not found' });
         if (amount !== undefined) advance.amount = amount;
         if (date !== undefined) advance.date = new Date(date);
+        if (modalite !== undefined) advance.modalite = modalite;
         await client.save();
         res.status(200).json({ message: 'Advance updated', data: client });
     } catch (error) {
