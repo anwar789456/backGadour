@@ -9,6 +9,7 @@ const bonsRoutes    = require('./routes/bons');
 const facturesRoutes = require('./routes/factures');
 const devisRoutes   = require('./routes/devis');
 const clientsRoutes = require('./routes/clients');
+const fournisseursRoutes = require('./routes/fournisseurs');
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use('/api', bonsRoutes);
 app.use('/api', facturesRoutes);
 app.use('/api', devisRoutes);
 app.use('/api', clientsRoutes);
+app.use('/api', fournisseursRoutes);
 
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
